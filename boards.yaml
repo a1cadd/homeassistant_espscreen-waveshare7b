@@ -150,6 +150,12 @@ wavesharep4:
   # Its extras under Screen settings, in this order (docs/SETTINGS.md, "A board's own settings").
   settings: [media_player, microphone]
 
+wavesharep4wifi6lcd7b:
+  file: waveshare-esp32p4-7b.yaml
+  name: Waveshare
+  model: ESP32-P4-WIFI6-Touch-LCD-7B
+  status: experimental
+
 reterminald1001:
   file: reterminald1001.yaml
   name: reTerminal D1001

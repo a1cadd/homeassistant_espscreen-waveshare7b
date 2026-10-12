@@ -1,0 +1,61 @@
+# Waveshare ESP32-P4-WIFI6-Touch-LCD-7B
+# 7-inch 1024x600 EK79007 MIPI-DSI panel, GT911 capacitive touch,
+# ESP32-P4 with ESP32-C6 Wi-Fi 6/BLE coprocessor.
+# Hardware values are taken from Waveshare's official 7B BSP/examples.
+packages:
+  hardware: !include ../hardware/esp32p4-c6.yaml
+  look: !include ../looks/standard.yaml
+  touch: !include ../features/capacitive-touch.yaml
+  backlight: !include ../features/backlight.yaml
+  camera: !include ../features/camera.yaml
+  self_test: !include ../features/self-test.yaml
+  snapshot: !include ../features/snapshot.yaml
+
+substitutions:
+  BOARD_ID: "wavesharep4wifi6lcd7b"
+  DEVICE_NAME: "wavesharep4wifi6lcd7b-new"
+  DEVICE_FRIENDLY_NAME: "Waveshare P4 7B"
+  PANEL_W: "1024"
+  PANEL_H: "600"
+  DISPLAY_DPI: "169.548"
+  GRID_COLS: "4"
+  GRID_ROWS: "4"
+  GRID_COLS_PORTRAIT: "2"
+  GRID_ROWS_PORTRAIT: "7"
+  SCREEN_MAX_TILES: "256"
+  SCREEN_MAX_PAGES: "16"
+  SCREEN_MAX_BAR_ITEMS: "12"
+  LVGL_BUFFER_SIZE: "50%"
+
+esp32:
+  flash_size: 32MB
+
+# Waveshare 7B: backlight is active-low PWM on GPIO32.
+output:
+  - platform: ledc
+    id: gpio_backlight_pwm
+    pin: GPIO32
+    frequency: 5kHz
+    inverted: true
+    max_power: 1.0
+    zero_means_zero: true
+
+# Official BSP: EK79007, 1024x600, 2-lane MIPI-DSI, LCD reset GPIO33.
+display:
+  - platform: mipi_dsi
+    id: my_display
+    model: WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-7B
+    reset_pin: GPIO33
+    update_interval: never
+    auto_clear_enabled: false
+
+# Official Arduino integration leaves GT911 INT/RST unassigned and polls I2C.
+# ESPHome's component defaults to the GT911 address 0x5D and supports 5 points.
+touchscreen:
+  - platform: gt911
+    id: ts_touch
+    i2c_id: touch_bus
+    display: my_display
+    update_interval: 20ms
+
+# BSP audio is intentionally omitted; Tessera only needs display/touch.
